@@ -5,7 +5,6 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const db = require('./models')
 
-
 const PORT = 8080 || process.env.PORT
 
 const app = express()
@@ -13,13 +12,20 @@ const app = express()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(express.static('public'))
-app.engine("handlebars", exphbs({ defaultLayout: "Main" }))
+app.engine("handlebars", exphbs({ defaultLayout: "main" }))
 app.set("view engine", "handlebars")
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/mongoHeadlines' 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, function() {
+    mongoose.connection.db.dropDatabase()
+})
 
 // routes 
+
+// / 
+app.get('/', (_, res) => {
+    res.redirect('/articles')
+})
 
 //scraping
 app.get('/scraper', (_, res) => {
@@ -31,11 +37,19 @@ app.get('/scraper', (_, res) => {
                         .children('.item-info-wrap')
                         .children('h1')
                         .text()
-                    result.link = $(this)
+                    result.link = "http://www.espn.com" + $(this)
                         .children('.item-info-wrap')
                         .children('h1')
                         .children('a')
                         .attr('href')
+                    result.image = $(this)
+                        .parent()
+                        .find('img')
+                        .attr('data-default-src')   
+                    result.summary = $(this)
+                        .children('.item-info-wrap')
+                        .children('p')
+                        .text()
                     db.Article.create(result)
                         .then(function(dbArticle) {
                             console.log('dbArticle ', dbArticle)
@@ -44,19 +58,26 @@ app.get('/scraper', (_, res) => {
                             console.log('err ', err)
                         })
             })
-        res.send("hello")
+        res.redirect('/')
     })
 })
 
 // all articles
 app.get('/articles', (_, res) => {
-    db.Article.find({})
-        .then(function(dbArticle) {
-            res.json(dbArticle)
+    db.Article.find({}).sort({ '_id': -1 })
+        .exec((err, article) => {
+            if (err) {
+                throw err
+            }
+            const art = {article: article}
+            res.render('index', art)
         })
-        .catch(function(err) {
-            res.json(err)
-        })
+        // .then(function(dbArticle) {
+        //     res.json(dbArticle)
+        // })
+        // .catch(function(err) {
+        //     res.json(err)
+        // })
 })
 
 // specific articles 
@@ -91,3 +112,5 @@ app.listen(PORT, () => console.log('Running on port ', PORT))
 database.once('open', function () {
     console.log('Mongoose connection went well')
 })
+
+
