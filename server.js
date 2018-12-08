@@ -20,7 +20,6 @@ mongoose.connect(MONGODB_URI)
 
 // routes 
 
-// / 
 app.get('/', (_, res) => {
     res.redirect('/articles')
 })
