@@ -15,6 +15,37 @@
           <p>{{summary}}</p>
           <i><p>{{timestamp}} Ago</p></i>
           <i><p>{{author}}</p></i>
+            <div class="row">
+            <form action="comments/{{_id}}" method="POST" class="card-panel col s8">
+                <h5>Comment on this Article:</h5>
+                <div class="row">
+                    <div class="input-field">
+                    <input  type="text" placeholder="Name" name="name">
+                    </div>
+                    <div class="input-field">
+                    <input type="text" placeholder="Comment" name="comment">
+                    </div>
+                </div>
+                <div class="row">
+                    <button type="submit" formaction="comments/{{this._id}}" formmethod="POST">Post a Comment</button>
+                </div>
+                </form>
+            </div>
+            <div class="row">
+            <div class="col s2"></div>
+                <div class="col s8">
+                <h5> Comments:</h5>
+                {{!-- No idea how to pull info from Note to get to here --}}
+                    {{!-- {{#if comments}}
+                    {{#each comment}}        
+                        <p>{{comments.name}}</p>
+                        <p>{{comment.comment}}<p>  
+                    {{/each}}
+                    {{else}} --}}
+                    <p>No Comments Yet.</p>
+                    {{!-- {{/if}} --}}
+                </div>
+            </div>
       </div>
     </div>
     <br>

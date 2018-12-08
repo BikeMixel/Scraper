@@ -16,7 +16,7 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }))
 app.set("view engine", "handlebars")
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/mongoHeadlines' 
-
+mongoose.connect(MONGODB_URI)
 
 // routes 
 
@@ -78,44 +78,40 @@ app.get('/articles', (_, res) => {
             const art = {article: article}
             res.render('index', art)
         })
-        // .then(function(dbArticle) {
-        //     res.json(dbArticle)
-        // })
-        // .catch(function(err) {
-        //     res.json(err)
-        // })
 })
 
 // specific articles 
-app.get('/articles/:id', (req, res) => {
-    db.Article.findOne({ _id: req.params.id })
-    .populate('note')
-    .then(function(dbArticle) {
-        res.json(dbArticle)
-    })
-    .catch(function(err) {
-        res.json(err)
-    })
-})
+// app.get('/articles/:id', (req, res) => {
+//     const articleID = req.params.id
+//     db.Article.findOne({ _id: articleID })
+//     .populate('note')
+//     .then(function(dbArticle) {
+//         res.json(dbArticle)
+//     })
+//     .catch(function(err) {
+//         res.json(err)
+//     })
+// })
 
 // saving comments
-app.post('/articles/:id', (req, res) => {
-    db.Note.create(req.body)
-        .then(function () {
-            return db.Article.findOneAndUpdate({_id: req.body.id}, {note: dbNote._id}, {new: true})
+app.post('/comments/:id', (req, res) => {
+    const articleID = req.params.id
+    console.log(req.body)
+        db.Note.create(req.body)
+            .then(function (dbNote) {
+                return db.Article.findOneAndUpdate({ _id: articleID }, { comments: dbNote }, {new: true})
+                .populate('comments')
                 .then(function(dbArticle) {
                     res.json(dbArticle)
                 })
                 .catch(function(err) {
                     res.json(err)
                 })
-        })
-})
-
-const database = mongoose.connection
+            })
+        // Need a way to send that to index.handlebars so it can render
+})    
+    
 app.listen(PORT, () => console.log('Running on port ', PORT))
-database.once('open', function () {
-    console.log('Mongoose connection went well')
-})
+
 
 
