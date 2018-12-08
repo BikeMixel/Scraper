@@ -1,5 +1,5 @@
 body {
-    background-image: radial-gradient(gainsboro,sienna,orange,rgb(255, 89, 0), rgb(62, 28, 3)) !important
+    background-image: linear-gradient(to left, rgb(255, 89, 0), rgb(62, 28, 3), gainsboro, rgb(62, 28, 3), rgb(255, 89, 0)) !important
 }
 a {
     color: black !important
@@ -7,9 +7,21 @@ a {
 a:hover {
     color: gray !important
 }
-.jumbotron,
+
 .card-header {
     color: white !important;
     font-family: 'Pacifico', cursive !important;
     background-image: linear-gradient(to left, gainsboro, rgb(255, 89, 0), rgb(62, 28, 3)) !important
+}
+.jumbotron {
+    color: rgb(62, 28, 3) !important;
+    font-family: 'Pacifico', cursive !important;
+    background-image: linear-gradient(to left, rgb(255, 89, 0), rgb(62, 28, 3), gainsboro, rgb(62, 28, 3), rgb(255, 89, 0)) !important
+}
+button {
+    background-color: rgb(255, 89, 0)
+}
+footer {
+    color: rgb(62, 28, 3) !important;
+    font-family: 'Pacifico', cursive !important;
 }
