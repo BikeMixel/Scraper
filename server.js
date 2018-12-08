@@ -5,7 +5,7 @@ const axios = require('axios')
 const cheerio = require('cheerio')
 const db = require('./models')
 
-const PORT = 8080 || process.env.PORT
+const PORT = process.env.PORT || 8080
 
 const app = express()
 
