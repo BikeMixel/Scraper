@@ -16,9 +16,7 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }))
 app.set("view engine", "handlebars")
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/mongoHeadlines' 
-mongoose.connect(MONGODB_URI, function() {
-    mongoose.connection.db.dropDatabase()
-})
+
 
 // routes 
 
@@ -50,6 +48,14 @@ app.get('/scraper', (_, res) => {
                         .children('.item-info-wrap')
                         .children('p')
                         .text()
+                    result.timestamp = $(this)
+                        .children('.item-info-wrap')
+                        .find('.timestamp')
+                        .text()
+                    result.author = $(this)
+                        .children('.item-info-wrap')
+                        .find('.author')
+                        .text()
                     db.Article.create(result)
                         .then(function(dbArticle) {
                             console.log('dbArticle ', dbArticle)
@@ -58,13 +64,13 @@ app.get('/scraper', (_, res) => {
                             console.log('err ', err)
                         })
             })
-        res.redirect('/')
+        res.redirect('/articles')
     })
 })
 
 // all articles
 app.get('/articles', (_, res) => {
-    db.Article.find({}).sort({ '_id': -1 })
+    db.Article.find({}).sort({ '_id': 1 })
         .exec((err, article) => {
             if (err) {
                 throw err
@@ -83,7 +89,6 @@ app.get('/articles', (_, res) => {
 // specific articles 
 app.get('/articles/:id', (req, res) => {
     db.Article.findOne({ _id: req.params.id })
-    .sort({ '_id': -1 })
     .populate('note')
     .then(function(dbArticle) {
         res.json(dbArticle)

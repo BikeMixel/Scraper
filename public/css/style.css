@@ -25,3 +25,7 @@ footer {
     color: rgb(62, 28, 3) !important;
     font-family: 'Pacifico', cursive !important;
 }
+.mainContainer {
+    min-height: 100%;
+    margin: 0 auto 200px;
+}
